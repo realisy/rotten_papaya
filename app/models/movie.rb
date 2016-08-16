@@ -1,6 +1,8 @@
 class Movie < ActiveRecord::Base
 
   has_many :reviews
+  has_attached_file :avatar, styles: { medium: "300x300>", thumb: "100x100>" }, default_url: "/images/:style/missing.png"
+  validates_attachment_content_type :avatar, content_type: /\Aimage\/.*\Z/
 
   validates :title,
             presence: true
@@ -23,7 +25,7 @@ class Movie < ActiveRecord::Base
   validate :release_date_is_in_the_past
 
   def review_average
-    reviews.sum(:rating_out_of_ten)/reviews.size
+    reviews.sum(:rating_out_of_ten) / reviews.size unless reviews.empty?
   end
 
   protected
